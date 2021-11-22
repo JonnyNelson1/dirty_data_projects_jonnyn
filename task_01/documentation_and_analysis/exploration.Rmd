@@ -41,7 +41,9 @@ cleaning_script_birds <- function(bird_data_by_record_id){
       str_replace_all(string = species_common_name_taxon_age_sex_plumage_phase,
                       pattern = "sensu.*$|[A-Z]{2,}.*$",
                       replacement = "")) %>%
-    select(-species_common_name_taxon_age_sex_plumage_phase)
+    mutate(across(where(is.character), str_trim)) %>%
+    mutate(count = ifelse(is.na(count), 1, count)) %>%
+    select(-species_common_name_taxon_age_sex_plumage_phase) 
 }
 
 clean_bird_data <- cleaning_script_birds(bird_data_by_record_id)
@@ -57,13 +59,13 @@ seabird_data <- left_join(clean_bird_data, clean_ship_data, "record_id")
 
 ```{r}
 
-# 1. Which bird has the most individual sightings
+# 2. Which bird has the highest total count
 
 seabird_data %>%
   group_by(species_common_name) %>%
   summarise(number_of_sightings = sum(count)) %>%
-  arrange(desc(number_of_sightings)) 
-  # head(1,)
+  arrange(desc(number_of_sightings)) %>%
+  head(1,)
   
 
 # Looked back at the regex and was able to remove any capitals letter after species common names as it may have ungrouped species
@@ -71,14 +73,13 @@ seabird_data %>%
 
 ```{r}
 
-# 2. Which bird has the most indivdual sightings?
+# 1. Which bird has the most indivdual sightings?
 
 seabird_data %>%
   filter(count == 1) %>%
   group_by(species_common_name) %>%
   summarise(number_of_individual_sightings = sum(count)) %>%
-  arrange(desc(number_of_individual_sightings)) %>%
-  head(1,)
+  arrange(desc(number_of_individual_sightings)) 
 
 ```
 
@@ -101,8 +102,9 @@ seabird_data %>%
 
 seabird_data %>%
   select(species_common_name, count) %>%
-  filter(count <= 1) %>%
-  group_by(species_common_name) 
+  filter(count != 1) %>%
+  group_by(species_common_name) %>%
+  summarise()
 
 
 ```
@@ -111,11 +113,23 @@ seabird_data %>%
 # 5. How many penguins were seen?
 
 seabird_data %>%
-  str_extract_all(species_common_name, "[penguin]")
+  filter(grepl('penguin', species_common_name)) %>%
+  group_by(species_common_name) %>%
+  summarise(number_of_pingos_seen = sum(count)) %>%
+  arrange(desc(number_of_pingos_seen)) %>%
+  mutate(total_no_pingos = sum(number_of_pingos_seen))
+  
 
 ```
 
 ```{r}
 glimpse(seabird_data)
+```
+
+```{r}
+glimpse(clean_bird_data)
+```
+```{r}
+glimpse(clean_ship_data)
 ```
 

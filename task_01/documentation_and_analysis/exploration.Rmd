@@ -1,0 +1,44 @@
+---
+title: "Exploration of the data"
+author: "Jonny Nelson"
+date: "22/11/2021"
+output: html_document
+---
+
+```{r}
+
+cleaning_script_ship <- function(ship_data_by_record_id){
+  ship_data_by_record_id %>%
+  clean_names() %>%
+  rename("latitude" = "lat", "longitude" = "long") %>%
+  select(record, record_id, date, time, latitude, longitude) 
+}
+
+clean_ship_data <- cleaning_script_ship(ship_data_by_record_id)
+
+```
+
+
+```{r}
+glimpse(clean_ship_data)
+```
+
+```{r}
+
+cleaning_script_birds <- function(bird_data_by_record_id){
+  bird_data_by_record_id %>%
+  clean_names() %>%
+  select(record,
+         record_id,
+         species_common_name_taxon_age_sex_plumage_phase,
+         count) %>%
+  
+}
+
+clean_bird_data <- cleaning_script_birds(bird_data_by_record_id)
+```
+
+```{r}
+glimpse(clean_bird_data)
+```
+

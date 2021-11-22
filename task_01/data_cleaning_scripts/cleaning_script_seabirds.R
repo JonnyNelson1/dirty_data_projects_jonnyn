@@ -4,10 +4,22 @@ library(here)
 
 library(readxl)
 
-seabirds_dirty <- read_excel("seabirds.xls")
+library(janitor)
+
+library(assertr)
+
+ship_data_by_record_id <- read_excel("seabirds.xls", sheet = "Ship data by record ID")
 
 
-# Notes for data cleaning function
+# Notes for data cleaning function for ship data
+
+cleaning_script <- function(ship_data_by_record_id){
+  ship_data_by_record_id %>%
+  clean_names() %>%
+  rename("latitude" = "lat")
+}
+
+clean_ship_data <- cleaning_script(ship_data_by_record_id)
 
 
 # Need to clean variable names to fit the naming convention
@@ -43,3 +55,29 @@ glimpse(seabirds_dirty)
 # None of the variables look like they need changed from one type to another.
 # date and time are however in the variable type <dttm>, so may need to 
 # convert time to <dbl>.
+
+
+bird_data_by_record_id <- read_excel("seabirds.xls", sheet = "Bird data by record ID")
+
+
+# Notes for data cleaning function for bird data
+
+bird_data_by_record_id %>%
+  select(`RECORD`,`RECORD ID`,`Species common name (taxon [AGE / SEX / PLUMAGE PHASE])`) %>%
+
+# Going to have to piece apart the Species common name and Species scientific 
+# name into new variables as data is missing in each. 
+  
+# Going to split these into species_common_name, species_scientific_name then
+# generally speaking find age, sex and plummage where possible
+  
+# Going to be a separate function for both then a pivot longer
+  
+# Learn Latin
+  
+# Many of these variables are not needed to answer the questions and as such
+# will just be selected out.
+
+# Once clean, join the tables together. 
+  
+           

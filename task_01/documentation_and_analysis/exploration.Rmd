@@ -103,8 +103,13 @@ seabird_data %>%
 seabird_data %>%
   select(species_common_name, count) %>%
   filter(count != 1) %>%
-  group_by(species_common_name) %>%
-  summarise()
+  group_by(species_common_name)
+
+# function if_else statement required
+
+# if count == 1, == TRUE
+# if count >= 1, == FALSE
+# 
 
 
 ```
@@ -118,6 +123,8 @@ seabird_data %>%
   summarise(number_of_pingos_seen = sum(count)) %>%
   arrange(desc(number_of_pingos_seen)) %>%
   mutate(total_no_pingos = sum(number_of_pingos_seen))
+
+# Below shows the number of penguins shown per species and also the total number of penguins observed.
   
 
 ```

@@ -24,6 +24,11 @@ glimpse(clean_ship_data)
 ```
 
 ```{r}
+library(stringr)
+```
+
+
+```{r}
 
 cleaning_script_birds <- function(bird_data_by_record_id){
   bird_data_by_record_id %>%
@@ -32,7 +37,11 @@ cleaning_script_birds <- function(bird_data_by_record_id){
          record_id,
          species_common_name_taxon_age_sex_plumage_phase,
          count) %>%
-  
+   mutate(species_common_name = 
+      str_replace_all(string = species_common_name_taxon_age_sex_plumage_phase,
+                      pattern = "sensu.*$|[A-Z]{2,}.*$",
+                      replacement = "")) %>%
+    select(-species_common_name_taxon_age_sex_plumage_phase)
 }
 
 clean_bird_data <- cleaning_script_birds(bird_data_by_record_id)
@@ -40,5 +49,73 @@ clean_bird_data <- cleaning_script_birds(bird_data_by_record_id)
 
 ```{r}
 glimpse(clean_bird_data)
+```
+
+```{r}
+seabird_data <- left_join(clean_bird_data, clean_ship_data, "record_id")
+```
+
+```{r}
+
+# 1. Which bird has the most individual sightings
+
+seabird_data %>%
+  group_by(species_common_name) %>%
+  summarise(number_of_sightings = sum(count)) %>%
+  arrange(desc(number_of_sightings)) 
+  # head(1,)
+  
+
+# Looked back at the regex and was able to remove any capitals letter after species common names as it may have ungrouped species
+```
+
+```{r}
+
+# 2. Which bird has the most indivdual sightings?
+
+seabird_data %>%
+  filter(count == 1) %>%
+  group_by(species_common_name) %>%
+  summarise(number_of_individual_sightings = sum(count)) %>%
+  arrange(desc(number_of_individual_sightings)) %>%
+  head(1,)
+
+```
+
+```{r}
+
+# 3. Which bird had the highest total count above a latitude of -30?
+
+seabird_data %>%
+  filter(latitude > -30) %>%
+  group_by(species_common_name) %>%
+  summarise(number_of_sightings = sum(count)) %>%
+  arrange(desc(number_of_sightings)) %>%
+  head(1,)
+
+```
+
+```{r}
+
+# 4. How many different types of birds were only ever seen in groups of 1?
+
+seabird_data %>%
+  select(species_common_name, count) %>%
+  filter(count <= 1) %>%
+  group_by(species_common_name) 
+
+
+```
+
+```{r}
+# 5. How many penguins were seen?
+
+seabird_data %>%
+  str_extract_all(species_common_name, "[penguin]")
+
+```
+
+```{r}
+glimpse(seabird_data)
 ```
 

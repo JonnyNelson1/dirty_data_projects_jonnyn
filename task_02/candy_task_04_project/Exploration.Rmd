@@ -1,0 +1,52 @@
+---
+title: "Exploration"
+author: "Jonny Nelson"
+date: "23/11/2021"
+output: html_document
+---
+
+```{r}
+glimpse(candy_data_2015)
+
+library(janitor)
+
+library(tidyverse)
+
+names(candy_data_2015)
+```
+
+```{r}
+cleaning_script_2015 <- function(candy_data_2015){
+  
+  candy_data_2015 %>%
+    
+    rename("id" = "Timestamp",
+           "age" = "How old are you?",
+           "going_out" = "Are you going actually going trick or treating yourself?",
+           "black_and_orange_wrappers" = "[Anonymous brown globs that come in black and orange wrappers]",
+           "vials_of_hfcs" = "[Vials of pure high fructose corn syrup, for main-lining into your vein]",
+           "cheap_candy" = "[Candy that is clearly just the stuff given out for free at restaurants]",
+           "toblerone" = "[Tolberone something or other]",
+           "chick_o_stick" = "[Chick-o-Sticks (we don’t know what that is)]",
+           "circus_peanuts" = "[Those odd marshmallow circus peanut things]") %>%
+    
+    select(-"[Cash, or other forms of legal tender]", -"[Dental paraphenalia]", -"[Generic Brand Acetaminophen]", -"[Broken glow stick]", -"[Healthy Fruit]", -"[Hugs (actual physical hugs)]", -"[Kale smoothie]", -"[Lapel Pins]", -"[Pencils]", -"[Peterson Brand Sidewalk Chalk]", -"[Vicodin]", -"[White Bread]", -"[Whole Wheat anything]", -c(97:124)) %>%
+  
+    clean_names() %>%
+    pivot_longer(cols = 4:83,
+                 names_to = "candy_name",
+                 values_to = "rating")
+  
+}
+
+clean_candydata_2015 <- cleaning_script_2015(candy_data_2015)
+
+```
+
+```{r}
+names(clean_candydata_2015)
+
+glimpse(clean_candydata_2015)
+```
+
+

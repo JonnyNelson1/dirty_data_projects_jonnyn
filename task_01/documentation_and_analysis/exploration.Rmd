@@ -100,18 +100,80 @@ seabird_data %>%
 
 # 4. How many different types of birds were only ever seen in groups of 1?
 
-seabird_data %>%
-  select(species_common_name, count) %>%
-  filter(count != 1) %>%
-  group_by(species_common_name)
+# seabird_data %>%
+#   select(species_common_name, count) %>%
+#   filter(count != 1) %>%
+#   group_by(species_common_name)
 
 # function if_else statement required
 
 # if count == 1, == TRUE
 # if count >= 1, == FALSE
+# if species_common_name has only TRUE = allow
+# if species_common_name has TRUE and FALSE = dont allow
+
+# species_of_1_group_only <- function(seabird_data, count) {
 # 
+#   if(count == 1 & count !> 1) {
+#     return(species_common_name)}
+#   
+# }
+# 
+# # 
+# # # if count is not equal to 1 set to 0
+# # 
+# species_observed_in_only_groups_of_one(seabird_data, count)
+
+# seabird_data$count <- ifelse(seabird_data$count != 1,
+#                              0,
+#                              seabird_data$count)
+
+# Needed to remove the mutate NA <- 1 out of the cleaning script and form a new script.
+
+cleaning_script_q4 <- function(bird_data_by_record_id){
+  bird_data_by_record_id %>%
+  clean_names() %>%
+  select(record,
+         record_id,
+         species_common_name_taxon_age_sex_plumage_phase,
+         count) %>%
+   mutate(species_common_name = 
+      str_replace_all(string = species_common_name_taxon_age_sex_plumage_phase,
+                      pattern = "sensu.*$|[A-Z]{2,}.*$",
+                      replacement = "")) %>%
+    mutate(across(where(is.character), str_trim)) %>%
+    # mutate(count = ifelse(is.na(count), 1, count)) %>%
+    select(-species_common_name_taxon_age_sex_plumage_phase) 
+}
+
+# the cleaning script was ran again for q4 to give the data.
+
+clean_bird_data_q4 <- cleaning_script_q4(bird_data_by_record_id)
+
+# The data.frames were joined again to form a special one.
+
+seabird_data_q4 <- left_join(clean_bird_data_q4, clean_ship_data, "record_id")
 
 
+
+groups_of_one <- seabird_data_q4 %>%
+  select(species_common_name, count) %>%
+  filter(count == 1) %>%
+  group_by(species_common_name) %>%
+  summarise(sum(count))
+
+groups_of_greater_than_one <- seabird_data_q4 %>%
+  select(species_common_name, count) %>%
+  filter(count > 1) %>%
+  group_by(species_common_name) %>%
+  summarise(sum(count))
+
+
+
+# Need to remove the convert NA = 1 function in cleaning script and then rejoin the tables and then run the code]=.
+  
+  
+  
 ```
 
 ```{r}

@@ -1,0 +1,118 @@
+---
+title: "Permutations of Country and Provinces"
+author: "Jonny Nelson"
+date: "23/11/2021"
+output: html_document
+---
+
+# Country: United States of America
+
+USSA	
+USA!!!!!!	
+USA! USA! USA!	
+USA! USA! USA!	
+USA! USA!	
+USA!	
+USA USA USA USA	
+USA USA USA	
+USA (I think but it's an election year so who can really tell)
+USA
+Usa	
+uSA
+US
+us	
+Units States	
+United Stetes	
+United States of America
+united states of america
+UNited States	
+United States
+america
+America
+U.S.A.
+u.s.
+U.s.
+U.S.
+Trumpistan
+The Yoo Ess of Aaayyyyyy
+the best one - usa
+Murica
+30.0	
+44.0	
+45.0	
+47.0	
+51.0	
+54.0	
+54.0
+
+# Pattern
+
+USA . . . anything
+
+united states . . . . anything
+
+Units States	
+United Stetes
+
+america
+
+u.s or u.s.a
+
+Trumpistan
+
+The Yoo Ess of Aaayyyyyy
+
+Murica
+
+nn.n
+
+# Regex
+
+```{r}
+
+# usa_names <- str_c("USSA", "USA!!!!!!", "USA! USA! USA!", "USA! USA!", "USA!", "USA USA USA USA", "USA USA USA", "USA (I think but it's an election year so who can really tell)", "USA", "us", "Units States", "United Stetes"	
+# "United States of America", "united states", "america", "U.S.A.", "u.s.", "Trumpistan", "The Yoo Ess of Aaayyyyyy", "the best one - usa", "Murica", "/ \d{2} /")
+
+usa_names <- str_c("usa", "state", "aaayyyyyy", "stetes", "us", "america", "murica", "cascadia", "\\d{3}", sep = "|")
+
+clean_candydata_2016 %>%
+  mutate(country = tolower(country)) %>%
+  # gsub("//.","", country) %>%
+  mutate(country = str_replace_all(string = country,
+                                           pattern = "\\.",
+                                           replacement = "")) %>%
+  mutate(country = if_else(str_detect(country, usa_names), "united states", country)) 
+
+# Yes! that has captured all the possible variations for the United States of America
+
+# UK Names
+
+uk_names <- str_c("uk", "england", "united kingdom", "united kindom", "gods country", sep = "|")
+
+clean_candydata_2016 %>%
+  mutate(country = tolower(country)) %>%
+  mutate(country = str_replace_all(string = country,
+                                           pattern = "\\'",
+                                           replacement = "")) %>%
+  mutate(country = if_else(str_detect(country, uk_names), "united kingdom", country)) %>%
+  arrange(country)
+
+# Canada Names 
+
+canada_names <- str_c("canada", "cascadia", "can[a]*[^e]",  sep = "|")
+
+clean_candydata_2016 %>%
+  mutate(country = tolower(country)) %>%
+  mutate(country = if_else(str_detect(country, canada_names), "canada", country)) %>%
+  arrange(country)
+
+# Looking through the data to find what patterns I need to match
+
+clean_candydata_2016 %>%
+  select(entry, country, province) %>%
+  arrange((country))
+
+
+```
+The republic of Cascadia
+canada

@@ -1,0 +1,110 @@
+---
+title: "Analysis and Questions"
+author: "Jonny Nelson"
+date: "24/11/2021"
+output: html_document
+---
+
+# Loading in packages
+
+```{r}
+library(tidyverse)
+```
+
+
+# Loading in the clean_data
+
+```{r}
+
+candy_clean <- read_csv(here("clean_data/candy_clean.csv"))
+
+```
+
+# Analysis Questions
+
+
+```{r}
+
+# 1. What is the total number of candy ratings given across the three years. (Number of candy ratings, not the number of raters. Don’t count missing values)
+
+candy_clean %>%
+  select(entry, rating) %>%
+  drop_na(rating) %>%
+  summarise(count = n())
+
+
+```
+
+```{r}
+
+# 2. What was the average age of people who are going out trick or treating?
+
+candy_clean %>%
+  select(entry, age, going_out) %>%
+  filter(going_out == "Yes") %>%
+  drop_na(age) %>%
+  summarise(average_age_of_people = mean(age))
+
+```
+
+
+```{r}
+
+# 2. What was the average age of people who are going out trick or treating?
+
+candy_clean %>%
+  select(entry, age, going_out) %>%
+  filter(going_out == "No") %>%
+  drop_na(age) %>%
+  summarise(average_age_of_people = mean(age))
+
+```
+
+```{r}
+
+# 4. For each of joy, despair and meh, which candy bar revived the most of these ratings?
+
+# Can use the function unique() to find all values in rating
+
+unique(candy_clean$rating)
+
+# JOY
+
+candy_clean %>%
+  select(entry, rating, candy_name) %>%
+  filter(rating == "JOY") %>%
+  drop_na(rating) %>%
+  count(rating)
+
+# DESPAIR
+
+candy_clean %>%
+  select(entry, rating, candy_name) %>%
+  filter(rating == "DESPAIR") %>%
+  drop_na(rating) %>%
+  count(rating)
+
+# MEH
+
+candy_clean %>%
+  select(entry, rating, candy_name) %>%
+  filter(rating == "MEH") %>%
+  drop_na(rating) %>%
+  count(rating)
+
+```
+
+```{r}
+
+# 5. How many people rated Starburst as despair?
+
+candy_clean %>%
+  select(entry, rating, candy_name) %>%
+  filter(rating == "DESPAIR" & candy_name == "starburst") %>%
+  count()
+
+```
+
+
+
+

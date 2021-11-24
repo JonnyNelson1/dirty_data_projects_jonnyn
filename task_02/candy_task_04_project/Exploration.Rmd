@@ -45,7 +45,6 @@ cleaning_script_2015 <- function(candy_data_2015){
   
 }
 
-
 clean_candydata_2015 <- cleaning_script_2015(candy_data_2015)
 
 clean_candydata_2015$entry <- 2015
@@ -112,6 +111,9 @@ cleaning_script_2016 <- function(candy_data_2016){
 clean_candydata_2016 <- cleaning_script_2016(candy_data_2016)
 
 clean_candydata_2016$entry <- 2016
+
+clean_candydata_2016 %>%
+      mutate(entry = str_c(entry, "_", row_number(), sep = ""))
 
 names(clean_candydata_2016)
 ```

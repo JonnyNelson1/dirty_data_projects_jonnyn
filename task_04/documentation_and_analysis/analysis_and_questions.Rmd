@@ -105,6 +105,31 @@ candy_clean %>%
 
 ```
 
+```{r}
+
+# For the next three questions, count despair as -1, joy as +1, and meh as 0.
+
+recoded_candy_clean <- candy_clean %>%
+  select(entry, gender, rating, candy_name, country, province) %>%
+  mutate(rating = recode(rating, "JOY" = 1, "MEH" = 0, "DESPAIR" = -1,))
+
+```
+
+```{r}
+
+# 6. What was the most popular candy bar by this rating system for each gender in the dataset ?
+
+recoded_candy_clean %>%
+  select(entry, rating, candy_name, gender) %>%
+  drop_na(rating) %>%
+  group_by(gender) %>%
+    candy_popularity_by_gender = case_when(
+      gender == "Male" ~ sum(rating),
+      gender == "Female" ~ sum(rating),
+      TRUE ~ sum(rating)
+    )
+  )
+```
 
 
 

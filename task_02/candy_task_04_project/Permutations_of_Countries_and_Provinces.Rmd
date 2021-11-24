@@ -70,24 +70,28 @@ nn.n
 
 ```{r}
 
-# usa_names <- str_c("USSA", "USA!!!!!!", "USA! USA! USA!", "USA! USA!", "USA!", "USA USA USA USA", "USA USA USA", "USA (I think but it's an election year so who can really tell)", "USA", "us", "Units States", "United Stetes"	
-# "United States of America", "united states", "america", "U.S.A.", "u.s.", "Trumpistan", "The Yoo Ess of Aaayyyyyy", "the best one - usa", "Murica", "/ \d{2} /")
+usa_names <- str_c("usa", "state", "aaayyyyyy", "stetes", "us", "america", "murica", "cascadia", "\\d{3}", "trumpistan", "united sates", "merica", "new york", "murrika", "alaska", "new jersey", "ahemamerca", "california", "pittsburgh", "^u(.*)", "^united(.*)", "fear and loathing", sep = "|")
 
-usa_names <- str_c("usa", "state", "aaayyyyyy", "stetes", "us", "america", "murica", "cascadia", "\\d{3}", sep = "|")
+uk_names <- str_c("uk", "england", "endland", "united kingdom", "united kindom", "gods country", "scotland", sep = "|")
 
-clean_candydata_2016 %>%
+canada_names <- str_c("canada", "cascadia", "can[a]*[^e]", "can",  sep = "|")
+
+countries_clean <- clean_2015_to_2017 %>%
   mutate(country = tolower(country)) %>%
-  # gsub("//.","", country) %>%
   mutate(country = str_replace_all(string = country,
                                            pattern = "\\.",
                                            replacement = "")) %>%
-  mutate(country = if_else(str_detect(country, usa_names), "united states", country)) 
+    mutate(country = str_replace_all(string = country,
+                                           pattern = "\\'",
+                                           replacement = "")) %>%
+  
+  mutate(country = if_else(str_detect(country, usa_names), "united states", country)) %>%
+  mutate(country = if_else(str_detect(country, uk_names), "united kingdom", country)) %>%
+  mutate(country = if_else(str_detect(country, canada_names), "canada", country)) 
+
+unique(countries_clean$country)
 
 # Yes! that has captured all the possible variations for the United States of America
-
-# UK Names
-
-uk_names <- str_c("uk", "england", "united kingdom", "united kindom", "gods country", sep = "|")
 
 clean_candydata_2016 %>%
   mutate(country = tolower(country)) %>%

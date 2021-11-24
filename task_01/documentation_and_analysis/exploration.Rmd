@@ -7,6 +7,12 @@ output: html_document
 
 ```{r}
 
+library(tidyverse)
+
+library(janitor)
+
+
+
 cleaning_script_ship <- function(ship_data_by_record_id){
   ship_data_by_record_id %>%
   clean_names() %>%
@@ -166,7 +172,14 @@ groups_of_greater_than_one <- seabird_data_q4 %>%
   select(species_common_name, count) %>%
   filter(count > 1) %>%
   group_by(species_common_name) %>%
-  summarise(sum(count))
+  summarise(sum(count)) %>%
+  mutate(number_of_species = nrow(species_common_name))
+
+# nrow
+
+# group_by
+# summarise max count
+# filter where = 1 
 
 
 

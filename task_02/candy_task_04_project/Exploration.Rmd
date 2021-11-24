@@ -20,6 +20,7 @@ names(candy_data_2015)
 
 
 ```{r}
+
 cleaning_script_2015 <- function(candy_data_2015){
   
   candy_data_2015 %>%
@@ -36,32 +37,18 @@ cleaning_script_2015 <- function(candy_data_2015){
     
     select(-"[Cash, or other forms of legal tender]", -"[Dental paraphenalia]", -"[Generic Brand Acetaminophen]", -"[Broken glow stick]", -"[Healthy Fruit]", -"[Hugs (actual physical hugs)]", -"[Kale smoothie]", -"[Lapel Pins]", -"[Pencils]", -"[Peterson Brand Sidewalk Chalk]", -"[Vicodin]", -"[White Bread]", -"[Whole Wheat anything]", -c(97:124)) %>%
   
-    clean_names() 
-    # mutate(entry_id = as.character(row_number()+2015)) %>%
-    # pivot_longer(cols = 4:83,
-    #              names_to = "candy_name",
-    #              values_to = "rating") 
-  # mutate(id = as.numeric_version(entry))
-  
+    clean_names() %>%
+    mutate(entry = str_c(2015, "_", row_number(), sep = "")) %>%
+    pivot_longer(cols = 4:83,
+                 names_to = "candy_name",
+                 values_to = "rating") %>%
+    mutate(country = NA, province = NA, gender = NA)
+
 }
 
-clean_candydata_2015 <- cleaning_script_2015(candy_data_2015)
+clean_2015 <- cleaning_script_2015(candy_data_2015)
 
-clean_candydata_2015$entry <- 2015
 
-```
-
-```{r}
-cleaning_script_2015_02 <- function(candy_data_2015){
-  
-  clean_candydata_2015 %>%
-     pivot_longer(cols = 4:83,
-                  names_to = "candy_name",
-                  values_to = "rating") 
-    
-}
-
-clean_2015 <- cleaning_script_2015_02(clean_candydata_2015)
 ```
 
 
@@ -98,40 +85,18 @@ cleaning_script_2016 <- function(candy_data_2016){
     
     select(-"[Bonkers (the board game)]", -"[Chardonnay]", -"[Creepy Religious comics/Chick Tracts]",-"[Person of Interest Season 3 DVD Box Set (not including Disc 4 with hilarious outtakes)]", -"[Cash, or other forms of legal tender]", -"[Dental paraphenalia]", -"[Generic Brand Acetaminophen]", -"[Broken glow stick]", -"[Healthy Fruit]", -"[Hugs (actual physical hugs)]", -"[Kale smoothie]", -"[Pencils]", -"[Vicodin]", -"[White Bread]", -"[Whole Wheat anything]", -c(107:123)) %>%
   
-    clean_names() 
-    # mutate(entry_id = as.character(row_number()+2015)) %>%
-    # pivot_longer(cols = 4:83,
-    #              names_to = "candy_name",
-    #              values_to = "rating") 
-  # mutate(id = as.numeric_version(entry))
+    clean_names() %>%
+    mutate(entry = str_c(entry, "_", row_number(), sep = "")) %>%
+    pivot_longer(cols = 7:91,
+                 names_to = "candy_name",
+                 values_to = "rating") 
   
 }
 
-
-clean_candydata_2016 <- cleaning_script_2016(candy_data_2016)
-
-clean_candydata_2016$entry <- 2016
-
-clean_candydata_2016 %>%
-      mutate(entry = str_c(entry, "_", row_number(), sep = ""))
-
-names(clean_candydata_2016)
-```
-
-```{r}
-
-cleaning_script_2016_02 <- function(candy_data_2016){
-  
-  clean_candydata_2016 %>%
-     pivot_longer(cols = 7:91,
-                  names_to = "candy_name",
-                  values_to = "rating") 
-    
-}
-
-clean_2016 <- cleaning_script_2016_02(clean_candydata_2016)
+clean_2016 <- cleaning_script_2016(candy_data_2016)
 
 ```
+
 
 ```{r}
 clean_candydata_2016 %>%
@@ -139,5 +104,59 @@ clean_candydata_2016 %>%
   group_by(country) %>%
   arrange((country)) %>%
   head(1259,)
+```
+
+
+# Cleaning Script for Candy 2017
+
+
+```{r}
+cleaning_script_2017 <- function(candy_data_2017){
+  
+  candy_data_2017 %>%
+    
+    clean_names() %>%
+    rename("entry" = "internal_id",
+           "age" = "q3_age",
+           "going_out" = "q1_going_out",
+           "gender" = "q2_gender",
+           "country" = "q4_country",
+           "province" = "q5_state_province_county_etc",
+           "bonkers" = "q6_bonkers_the_candy",
+           "sour_patch_kids" = "q6_sourpatch_kids_i_e_abominations_of_nature",
+           "sweetums" = "q6_sweetums_a_friend_to_diabetes",
+           "black_and_orange_wrappers" = "q6_anonymous_brown_globs_that_come_in_black_and_orange_wrappers_a_k_a_mary_janes",
+           "vials_of_hfcs" = "q6_vials_of_pure_high_fructose_corn_syrup_for_main_lining_into_your_vein",
+           "toblerone" = "q6_tolberone_something_or_other",
+           "chick_o_stick" = "q6_chick_o_sticks_we_don_t_know_what_that_is") %>%
+    
+    select(-"q6_bonkers_the_board_game", -"q6_chardonnay", -"q6_creepy_religious_comics_chick_tracts", -"q6_cash_or_other_forms_of_legal_tender", -"q6_dental_paraphenalia", -"q6_generic_brand_acetaminophen", -"q6_broken_glow_stick", -"q6_healthy_fruit", -"q6_hugs_actual_physical_hugs", -"q6_kale_smoothie", -"q6_pencils", -"q6_vicodin", -"q6_white_bread", -"q6_whole_wheat_anything", -c(110:120)) %>%
+    
+      mutate(entry = str_c(2017, "_", row_number(), sep = "")) %>%
+      
+      pivot_longer(cols = 7:95,
+                   names_to = "candy_name",
+                   values_to = "rating")
+     
+}
+
+
+names(clean_2017)
+```
+
+
+# Welding all 3 data sets together
+
+
+```{r}
+clean_2015_to_2017 <- bind_rows(clean_2015, clean_2016, clean_2017)
+
+clean_2015_to_2017$age <- as.numeric(clean_2015_to_2017$age)
+
+clean_2015_to_2017 <- clean_2015_to_2017 %>%
+  mutate(age = if_else(age >= 2 & age <= 100, age, as.numeric(NA)))
+
+clean_2015_to_2017
+
 ```
 

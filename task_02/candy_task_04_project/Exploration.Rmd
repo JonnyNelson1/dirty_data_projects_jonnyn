@@ -5,14 +5,28 @@ date: "23/11/2021"
 output: html_document
 ---
 
+# Loading in the packages
+
 ```{r}
-glimpse(candy_data_2015)
+library(readxl)
 
 library(janitor)
 
 library(tidyverse)
 
-names(candy_data_2015)
+library(here)
+```
+
+# Loading in the data sets
+
+```{r}
+
+candy_data_2015 <- read_excel("candy_ranking_data/boing-boing-candy-2015.xlsx")
+
+candy_data_2016 <- read_excel("candy_ranking_data/boing-boing-candy-2016.xlsx")
+
+candy_data_2017 <- read_excel("candy_ranking_data/boing-boing-candy-2017.xlsx")
+
 ```
 
 
@@ -49,13 +63,6 @@ cleaning_script_2015 <- function(candy_data_2015){
 clean_2015 <- cleaning_script_2015(candy_data_2015)
 
 
-```
-
-
-```{r}
-names(clean_candydata_2015)
-
-glimpse(clean_candydata_2015)
 ```
 
 
@@ -98,15 +105,6 @@ clean_2016 <- cleaning_script_2016(candy_data_2016)
 ```
 
 
-```{r}
-clean_candydata_2016 %>%
-  select(country, province) %>%
-  group_by(country) %>%
-  arrange((country)) %>%
-  head(1259,)
-```
-
-
 # Cleaning Script for Candy 2017
 
 
@@ -140,8 +138,7 @@ cleaning_script_2017 <- function(candy_data_2017){
      
 }
 
-
-names(clean_2017)
+clean_2017 <- cleaning_script_2017(candy_data_2017)
 ```
 
 
@@ -149,7 +146,16 @@ names(clean_2017)
 
 
 ```{r}
+
 clean_2015_to_2017 <- bind_rows(clean_2015, clean_2016, clean_2017)
+
+```
+
+
+# Coercing age to be numeric and filtering values to return ages between 2 - 100
+
+
+```{r}
 
 clean_2015_to_2017$age <- as.numeric(clean_2015_to_2017$age)
 
@@ -157,6 +163,49 @@ clean_2015_to_2017 <- clean_2015_to_2017 %>%
   mutate(age = if_else(age >= 2 & age <= 100, age, as.numeric(NA)))
 
 clean_2015_to_2017
+
+```
+
+
+# Regex 
+
+```{r}
+
+# Regex Patterns for United States, United Kingdom and Canada
+
+usa_names <- str_c("usa", "state", "aaayyyyyy", "stetes", "us", "america", "murica", "\\d{3}", "trumpistan", "united sates", "merica", "new york", "murrika", "alaska", "new jersey", "ahemamerca", "california", "pittsburgh", "^u s (.*)", "^united st(.*)", "fear and loathing", sep = "|")
+
+uk_names <- str_c("uk", "england", "endland", "united kingdom", "united kindom", "gods country", "scotland", sep = "|")
+
+canada_names <- str_c("canada", "can[a]*[^e]", "can", "the republic of cascadia",  sep = "|")
+
+# Cleaning the countries based on the regex patterns
+
+candy_clean <- clean_2015_to_2017 %>%
+  mutate(country = tolower(country)) %>%
+  mutate(country = str_replace_all(string = country,
+                                           pattern = "\\.",
+                                           replacement = "")) %>%
+  mutate(country = str_replace_all(string = country,
+                                           pattern = "\\'",
+                                           replacement = "")) %>%
+  mutate(country = if_else(str_detect(country, usa_names), "united states", country)) %>%
+  mutate(country = if_else(str_detect(country, uk_names), "united kingdom", country)) %>%
+  mutate(country = if_else(str_detect(country, canada_names), "canada", country)) 
+
+# Unique countries is good for seeing what is not captured in the regex patterns. Might be helpful if I could know if some patterns are capturing the same country (especially between US and UK)
+
+unique(candy_clean$country)
+
+# Cascadia runs from Vancouver to Southern California. Need to find if these observations are in Canada or US
+
+candy_clean %>%
+  select(country, province) %>%
+  filter(country == "the republic of cascadia")
+
+# Write the candy_clean data into the clean data folder
+
+write_csv(here(""))
 
 ```
 

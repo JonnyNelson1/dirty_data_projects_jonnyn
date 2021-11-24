@@ -5,92 +5,49 @@ date: "23/11/2021"
 output: html_document
 ---
 
-# Country: United States of America
-
-USSA	
-USA!!!!!!	
-USA! USA! USA!	
-USA! USA! USA!	
-USA! USA!	
-USA!	
-USA USA USA USA	
-USA USA USA	
-USA (I think but it's an election year so who can really tell)
-USA
-Usa	
-uSA
-US
-us	
-Units States	
-United Stetes	
-United States of America
-united states of america
-UNited States	
-United States
-america
-America
-U.S.A.
-u.s.
-U.s.
-U.S.
-Trumpistan
-The Yoo Ess of Aaayyyyyy
-the best one - usa
-Murica
-30.0	
-44.0	
-45.0	
-47.0	
-51.0	
-54.0	
-54.0
-
-# Pattern
-
-USA . . . anything
-
-united states . . . . anything
-
-Units States	
-United Stetes
-
-america
-
-u.s or u.s.a
-
-Trumpistan
-
-The Yoo Ess of Aaayyyyyy
-
-Murica
-
-nn.n
-
 # Regex
 
 ```{r}
 
-usa_names <- str_c("usa", "state", "aaayyyyyy", "stetes", "us", "america", "murica", "cascadia", "\\d{3}", "trumpistan", "united sates", "merica", "new york", "murrika", "alaska", "new jersey", "ahemamerca", "california", "pittsburgh", "^u(.*)", "^united(.*)", "fear and loathing", sep = "|")
+# Regex Patterns for United States, United Kingdom and Canada
+
+usa_names <- str_c("usa", "state", "aaayyyyyy", "stetes", "us", "america", "murica", "\\d{3}", "trumpistan", "united sates", "merica", "new york", "murrika", "alaska", "new jersey", "ahemamerca", "california", "pittsburgh", "^[u s ](.*)", "^[united st](.*)", "fear and loathing", sep = "|")
 
 uk_names <- str_c("uk", "england", "endland", "united kingdom", "united kindom", "gods country", "scotland", sep = "|")
 
-canada_names <- str_c("canada", "cascadia", "can[a]*[^e]", "can",  sep = "|")
+canada_names <- str_c("canada", "can[a]*[^e]", "can", "the republic of cascadia",  sep = "|")
+
+# Cleaning the countries based on the regex patterns
 
 countries_clean <- clean_2015_to_2017 %>%
   mutate(country = tolower(country)) %>%
   mutate(country = str_replace_all(string = country,
                                            pattern = "\\.",
                                            replacement = "")) %>%
-    mutate(country = str_replace_all(string = country,
+  mutate(country = str_replace_all(string = country,
                                            pattern = "\\'",
                                            replacement = "")) %>%
-  
   mutate(country = if_else(str_detect(country, usa_names), "united states", country)) %>%
   mutate(country = if_else(str_detect(country, uk_names), "united kingdom", country)) %>%
   mutate(country = if_else(str_detect(country, canada_names), "canada", country)) 
 
+# Unique countries is good for seeing what is not captured in the regex patterns. Might be helpful if I could know if some patterns are capturing the same country (especially between US and UK)
+
 unique(countries_clean$country)
 
+# Cascadia runs from Vancouver to Southern California
+
+countries_clean %>%
+  select(country, province) %>%
+  filter(country == "the republic of cascadia")
+
+countries_clean
+
+```
+
+# Junk Code
+
+```{r}
 # Yes! that has captured all the possible variations for the United States of America
 
 clean_candydata_2016 %>%
@@ -101,7 +58,6 @@ clean_candydata_2016 %>%
   mutate(country = if_else(str_detect(country, uk_names), "united kingdom", country)) %>%
   arrange(country)
 
-# Canada Names 
 
 canada_names <- str_c("canada", "cascadia", "can[a]*[^e]",  sep = "|")
 
@@ -118,5 +74,4 @@ clean_candydata_2016 %>%
 
 
 ```
-The republic of Cascadia
-canada
+

@@ -188,5 +188,5 @@ candy_clean <- clean_2015_to_2017 %>%
 # Write the candy_clean data into the clean data folder
 
 
-write_csv(x = candy_clean, "clean_data/candy_clean.csv")
+write_csv(x = candy_clean, here("clean_data/candy_clean.csv"))
 

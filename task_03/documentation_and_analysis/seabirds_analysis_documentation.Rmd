@@ -126,7 +126,7 @@ q4_answer <- anti_join(groups_of_one, groups_of_greater_than_one, by = "species_
 # Testing that the number of species brought back are correct in the original clean_bird_data
 
   
-ccc <- clean_bird_data %>%
+clean_bird_data %>%
   select(species_common_name, count) %>%
   filter(species_common_name == "White-tailed tropicbird")
   

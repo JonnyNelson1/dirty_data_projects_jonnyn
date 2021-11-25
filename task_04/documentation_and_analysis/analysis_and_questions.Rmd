@@ -30,7 +30,7 @@ candy_clean <- read_csv(here("clean_data/candy_clean.csv"))
 # 1. What is the total number of candy ratings given across the three years. (Number of candy ratings, not the number of raters. Don’t count missing values)
 
 candy_clean %>%
-  select(entry, rating) %>%
+  select(rating) %>%
   drop_na(rating) %>%
   summarise(count = n())
 
@@ -140,12 +140,15 @@ recoded_candy_clean <- candy_clean %>%
 
 recoded_candy_clean %>%
   select(entry, rating, candy_name, gender) %>%
+  filter(candy_name != "any_full_sized_candy_bar") %>%
   group_by(gender, candy_name) %>%
   drop_na(rating) %>%
   summarise(count = sum(rating)) %>%
-  slice_max(count, n = 2) 
+  slice_max(count, n = 1) 
 
 # Excluding the "any_full_sized_candy_bar" result, the results show different candy preferences by gender below.
+
+# "any_full_sized_candy_bar" is too generic to be useful in analysis
 
 ```
 
@@ -153,19 +156,24 @@ recoded_candy_clean %>%
 
 # 7.What was the most popular candy bar in each year?
 
-year_mutated_candy_clean <- recoded_candy_clean %>%
+ recoded_candy_clean %>%
   select(entry, rating, candy_name) %>%
+  filter(candy_name != "any_full_sized_candy_bar") %>%
   drop_na(rating) %>%
   mutate(entry = str_replace_all(string = entry,
                                  pattern = "\\_.*$",
                                  replacement = "")) %>%
   group_by(entry, candy_name) %>%
   summarise(count = sum(rating)) %>%
-  slice_max(count, n = 3)
+  slice_max(count, n = 1)
 
 year_mutated_candy_clean
 
-# "reese_s_peanut_butter_cups", is the most popular across all years excluding "any_full_sized_candy_bar"
+# Assumption: Excluding "any_full_sized_candy_bar" as it is too generic
+
+# 2015 and 2017: "reese_s_peanut_butter_cups" is favourite
+
+# 206: "kit_kat" is favourite
 
 ```
 
@@ -175,6 +183,7 @@ year_mutated_candy_clean
 
 recoded_candy_clean %>%
   select(candy_name, rating, country) %>%
+  # filter(candy_name != "any_full_sized_candy_bar") %>%
   drop_na(rating) %>%
   filter(country == c("united states", "united kingdom", "canada")) %>%
   group_by(country, candy_name) %>%

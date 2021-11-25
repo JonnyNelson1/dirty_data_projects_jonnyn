@@ -131,5 +131,17 @@ recoded_candy_clean %>%
   )
 ```
 
+```{r}
+
+# 7.What was the most popular candy bar in each year?
+
+recoded_candy_clean %>%
+  select(entry, rating, candy_name) %>%
+  drop_na(rating) %>%
+  mutate(entry = str_replace_all(string = entry,
+                                 pattern = "_0-9.*$",
+                                 replacement = "")
+
+```
 
 

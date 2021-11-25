@@ -116,10 +116,12 @@ cleaning_script_2017 <- function(candy_data_2017){
     select(-"q6_bonkers_the_board_game", -"q6_chardonnay", -"q6_creepy_religious_comics_chick_tracts", -"q6_cash_or_other_forms_of_legal_tender", -"q6_dental_paraphenalia", -"q6_generic_brand_acetaminophen", -"q6_broken_glow_stick", -"q6_healthy_fruit", -"q6_hugs_actual_physical_hugs", -"q6_kale_smoothie", -"q6_pencils", -"q6_vicodin", -"q6_white_bread", -"q6_whole_wheat_anything", -c(110:120)) %>%
     
     mutate(entry = str_c(2017, "_", row_number(), sep = "")) %>%
-    
     pivot_longer(cols = 7:95,
                  names_to = "candy_name",
-                 values_to = "rating")
+                 values_to = "rating") %>%
+    mutate(candy_name = str_replace_all(string = candy_name,
+                                        pattern = "q6_",
+                                        replacement = ""))
   
 }
 

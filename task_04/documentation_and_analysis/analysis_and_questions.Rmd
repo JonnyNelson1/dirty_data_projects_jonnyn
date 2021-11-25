@@ -74,7 +74,12 @@ candy_clean %>%
   select(entry, rating, candy_name) %>%
   filter(rating == "JOY") %>%
   drop_na(rating) %>%
-  count(rating)
+  group_by(candy_name, rating) %>%
+  count(rating) %>%
+  arrange(desc(n))
+
+# "any_full_sized_candy_bar" and then "reese_s_peanut_butter_cups" returned the most joy ratings
+
 
 # DESPAIR
 
@@ -82,7 +87,12 @@ candy_clean %>%
   select(entry, rating, candy_name) %>%
   filter(rating == "DESPAIR") %>%
   drop_na(rating) %>%
-  count(rating)
+  group_by(candy_name, rating) %>%
+  count(rating) %>%
+  arrange(desc(n))
+
+# "gum_from_baseball_cards" returned the most despair ratings
+
 
 # MEH
 
@@ -90,7 +100,11 @@ candy_clean %>%
   select(entry, rating, candy_name) %>%
   filter(rating == "MEH") %>%
   drop_na(rating) %>%
-  count(rating)
+  group_by(candy_name, rating) %>%
+  count(rating) %>%
+  arrange(desc(n))
+
+# "lollipops" returned the most MEH ratings
 
 ```
 
@@ -101,7 +115,10 @@ candy_clean %>%
 candy_clean %>%
   select(entry, rating, candy_name) %>%
   filter(rating == "DESPAIR" & candy_name == "starburst") %>%
-  count()
+  group_by(candy_name) %>%
+  summarise(count = n())
+
+# 1990 people rated starburst as "DESPAIR" over 3 years
 
 ```
 
@@ -121,27 +138,48 @@ recoded_candy_clean <- candy_clean %>%
 
 recoded_candy_clean %>%
   select(entry, rating, candy_name, gender) %>%
+  group_by(gender, candy_name) %>%
   drop_na(rating) %>%
-  group_by(gender) %>%
-    candy_popularity_by_gender = case_when(
-      gender == "Male" ~ sum(rating),
-      gender == "Female" ~ sum(rating),
-      TRUE ~ sum(rating)
-    )
-  )
+  summarise(count = sum(rating)) %>%
+  slice_max(count, n = 2) 
+
+# Excluding the "any_full_sized_candy_bar" result, the results show different candy preferences by gender below.
+
 ```
 
 ```{r}
 
 # 7.What was the most popular candy bar in each year?
 
-recoded_candy_clean %>%
+year_mutated_candy_clean <- recoded_candy_clean %>%
   select(entry, rating, candy_name) %>%
   drop_na(rating) %>%
   mutate(entry = str_replace_all(string = entry,
-                                 pattern = "_0-9.*$",
-                                 replacement = "")
+                                 pattern = "\\_.*$",
+                                 replacement = "")) %>%
+  group_by(entry, candy_name) %>%
+  summarise(count = sum(rating)) %>%
+  slice_max(count, n = 3)
+
+year_mutated_candy_clean
+
+# "reese_s_peanut_butter_cups", is the most popular across all years excluding "any_full_sized_candy_bar"
 
 ```
 
+```{r}
+
+# 8. What was the most popular candy bar by this rating for people in US, Canada, UK, and all other countries?
+
+recoded_candy_clean %>%
+  select(candy_name, rating, country) %>%
+  drop_na(rating) %>%
+  filter(country == c("united states", "united kingdom", "canada")) %>%
+  group_by(country, candy_name) %>%
+  summarise(count = sum(rating)) %>%
+  slice_max(count, n = 2)
+
+# Canada's most popular candy is "lindt_truffle", The UK's most popular candy is "reese_s_peanut_butter_cups" and the US's most popular candy is "reese_s_peanut_butter_cups" excluding "any_full_sized_candy_bar".
+
+```
 

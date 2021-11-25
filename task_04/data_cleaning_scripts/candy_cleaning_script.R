@@ -58,6 +58,9 @@ clean_2015 <- cleaning_script_2015(candy_data_2015)
 # Cleaning Script for Candy 2016 Data
 
 
+# candy_data_2016$Timestamp <- 2016
+
+
 cleaning_script_2016 <- function(candy_data_2016){
   
   candy_data_2016 %>%
@@ -81,7 +84,7 @@ cleaning_script_2016 <- function(candy_data_2016){
     select(-"[Bonkers (the board game)]", -"[Chardonnay]", -"[Creepy Religious comics/Chick Tracts]",-"[Person of Interest Season 3 DVD Box Set (not including Disc 4 with hilarious outtakes)]", -"[Cash, or other forms of legal tender]", -"[Dental paraphenalia]", -"[Generic Brand Acetaminophen]", -"[Broken glow stick]", -"[Healthy Fruit]", -"[Hugs (actual physical hugs)]", -"[Kale smoothie]", -"[Pencils]", -"[Vicodin]", -"[White Bread]", -"[Whole Wheat anything]", -c(107:123)) %>%
     
     clean_names() %>%
-    mutate(entry = str_c(entry, "_", row_number(), sep = "")) %>%
+    mutate(entry = str_c("2016", "_", row_number(), sep = "")) %>%
     pivot_longer(cols = 7:91,
                  names_to = "candy_name",
                  values_to = "rating") 

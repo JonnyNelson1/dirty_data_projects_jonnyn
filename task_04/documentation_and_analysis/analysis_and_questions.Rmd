@@ -172,7 +172,7 @@ year_mutated_candy_clean
 # Assumption: Excluding "any_full_sized_candy_bar" as it is too generic
 
 # 2015 and 2017: "reese_s_peanut_butter_cups" is favourite
-
+=
 # 206: "kit_kat" is favourite
 
 ```
